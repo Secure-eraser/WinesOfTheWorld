@@ -223,122 +223,197 @@ def index():
     # render page using a single template string (pasteable)
     template = """
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title>Wines of the World — Explorer</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-  :root{
-    --bg: #f7f4ef;
-    --card: #ffffff;
-    --muted: #6d6d6d;
-    --accent: #5a0b0b;
-    --glass: rgba(255,255,255,0.6);
-  }
-  [data-theme="dark"]{
-    --bg: #0f1113;
-    --card: #0e1113;
-    --muted: #9fa3a6;
-    --accent: #f3c6c6;
-    --glass: rgba(255,255,255,0.03);
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:24px;
-    font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    background: radial-gradient(1200px 400px at -10% 10%, rgba(90,11,11,0.03), transparent),
-                var(--bg);
-    color: #e6e6e6;
-    transition: background 0.25s ease;
-  }
-  header{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:14px}
-  h1{color:var(--accent);margin:0;font-size:2rem;letter-spacing:-0.6px}
-  .sub{color:var(--muted);font-size:0.95rem;margin-top:4px}
-  .controls{display:flex;gap:12px;align-items:center}
-  .btn{
-    background: linear-gradient(180deg,var(--accent), #6b1111);
-    border:none;color:white;padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:600;
-    box-shadow:0 6px 18px rgba(90,11,11,0.14);transition:transform .14s ease, opacity .14s;
-  }
-  .btn:active{transform:translateY(1px)}
+    :root {
+      --bg: #f7f4ef;
+      --card: #fff8f6;
+      --muted: #7c7171;
+      --accent: #943232;
+      --accent2: #5a2130;
+      --divider: #eddad5;
+    }
+    [data-theme="dark"]{
+      --bg: #181319;
+      --card: #232024;
+      --muted: #cebdbc;
+      --accent: #e6b198;
+      --accent2: #a87362;
+      --divider: #3a2836;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: var(--bg);
+      color: #24110a;
+    }
+    .centered {
+      text-align: center;
+      margin-top: 32px;
+      margin-bottom: 16px;
+    }
+    h1 {
+      color: var(--accent2);
+      font-size: 2.35rem;
+      font-weight: 700;
+      margin: 0 0 0.5em 0;
+      letter-spacing: -1px;
+      text-shadow: 0 3px 24px rgba(90,33,48, 0.18);
+      text-align: center;
+    }
+    .sub {
+      color: var(--muted);
+      font-size: 1.07rem;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+    form.search-form {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 30px 24px 18px 24px;
+      border: 1px solid var(--divider);
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+      gap: 22px;
+      align-items: end;
+      box-shadow: 0 10px 30px rgba(90,33,48,0.08);
+      color: #432218;
+      margin-bottom: 10px;
+      max-width: 100vw;
+    }
+    label { font-weight: 600; font-size: 1rem; color: var(--accent2); }
+    input[type="text"], input[type="number"], select {
+      padding: 10px;
+      border-radius: 9px;
+      border: 1px solid #e7d1c5;
+      background: #fff8f6;
+      font-size: 1rem;
+      width: 100%;
+      margin-top: 7px;
+      color: #432218;
+      transition: border .18s;
+    }
+    input[type="text"]:focus, input[type="number"]:focus, select:focus {
+      border-color: var(--accent2);
+      outline: none;
+    }
+    .search-btn-row {
+      grid-column: 1/-1;
+      display: flex;
+      justify-content: center;
+      margin-top: 12px;
+      margin-bottom: 4px;
+    }
+    .btn {
+      background: linear-gradient(180deg,var(--accent),var(--accent2));
+      border: none;
+      color: white;
+      padding: 12px 36px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1.08rem;
+      letter-spacing:1px;
+      box-shadow:0 6px 18px rgba(90,33,48,0.14);
+      transition: background .19s, box-shadow .14s;
+      margin-bottom:2px;
+    }
+    .btn:active { background: #d47a78; }
 
-  form.search-form{
-    background:var(--card);
-    border-radius:12px;padding:18px;border:1px solid rgba(0,0,0,0.06);
-    display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;align-items:end;
-    box-shadow:0 10px 30px rgba(2,6,23,0.06);
-    color: #111;
-    transition: transform .2s ease, box-shadow .2s ease;
-  }
-  form.search-form:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(2,6,23,0.08)}
-
-  label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:0.9rem;color:#333}
-  input[type="text"], input[type="number"], select{
-    padding:10px;border-radius:8px;border:1px solid #e8e2dd;background:transparent;font-size:0.95rem;
-  }
-
-  .results-meta{margin-top:18px;margin-bottom:10px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:10px}
-
-  .wine-card{
-    background:var(--card);border-radius:14px;padding:16px;border:1px solid rgba(0,0,0,0.04);
-    box-shadow: 0 8px 22px rgba(2,6,23,0.06);
-    transform-origin:center;transition:transform .16s ease, box-shadow .16s ease;
-    overflow:hidden;
-  }
-  .wine-card:hover{transform:translateY(-6px);box-shadow:0 20px 44px rgba(2,6,23,0.12)}
-  .title{font-weight:700;color:#222;margin-bottom:6px}
-  .meta{color:var(--muted);font-size:0.9rem;margin-bottom:8px}
-  .tags{font-size:0.85rem;color:#7b4a4a;margin-bottom:8px}
-  .desc{color:#333;font-size:0.92rem;line-height:1.35;max-height:5.2em;overflow:hidden}
-
-  /* pagination */
-  .pagination{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:20px}
-  .page-btn{padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:var(--card);cursor:pointer}
-  .page-btn.active{background:var(--accent);color:white;border:none;box-shadow:0 6px 16px rgba(90,11,11,0.12)}
-
-  /* subtle card shimmer when loading */
-  .shimmer{animation:shimmer 2s infinite linear;background:linear-gradient(90deg,#f3f3f3 25%, #ececec 37%, #f3f3f3 63%);background-size:1000px 100%;}
-  @keyframes shimmer{0%{background-position:-1000px 0}100%{background-position:1000px 0}}
-
-  /* dark theme colors override for text readability */
-  [data-theme="dark"] body, [data-theme="dark"] .title{color:#f3f3f3}
-  [data-theme="dark"] label{color:#ccc}
-  [data-theme="dark"] .desc{color:#ddd}
-  [data-theme="dark"] .meta{color:#b8b8b8}
-  [data-theme="dark"] .search-form{color:#ddd}
-
-  /* small screens */
-  @media (max-width:640px){
-    h1{font-size:1.4rem}
-    .btn{padding:8px 10px}
-    body{margin:12px}
-  }
+    .results-meta {
+      margin-top: 10px;
+      margin-bottom: 10px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.98rem;
+      padding: 0 24px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+      gap: 24px;
+      margin: 20px 0;
+      padding: 0 18px;
+    }
+    .wine-card {
+      background: var(--card);
+      border-radius: 17px;
+      padding: 18px 15px 16px 15px;
+      border: 1px solid var(--divider);
+      box-shadow: 0 8px 24px rgba(90,33,48,0.06);
+      transition: transform .16s, box-shadow .16s;
+      overflow: visible;
+      min-height: 180px;
+      word-break: break-word;
+      display: flex;
+      flex-direction: column;
+    }
+    .wine-card:hover {transform:translateY(-2px) scale(1.01);box-shadow:0 16px 40px rgba(90,33,48,0.12);}
+    .title { font-weight:700; color: var(--accent2); margin-bottom:7px; font-size:1.22rem; text-align:left;}
+    .meta { color:var(--muted); font-size:1rem; margin-bottom:8px; }
+    .tags { font-size:0.93rem; color:#a87362; margin-bottom:9px; }
+    .desc { color:#32221a; font-size:1rem; line-height:1.38; margin-top:2px; white-space:pre-line; word-break:break-word; }
+    .pagination {
+      display:flex; gap:10px; align-items:center; justify-content:center; margin:24px 0 36px 0;
+    }
+    .page-btn {
+      padding:8px 14px;
+      border-radius:8px;
+      border:1px solid var(--divider);
+      background:var(--card);
+      cursor:pointer;
+      font-size:1rem;
+      color: var(--accent2);
+    }
+    .page-btn.active {
+      background: var(--accent);
+      color: white;
+      border:none;
+      box-shadow:0 6px 16px rgba(90,11,11,0.13);
+    }
+    @media (max-width:650px){
+      h1{font-size:1.4rem;}
+      .search-form{padding:16px 3px;}
+      .grid{grid-template-columns:1fr;padding:0 2px;}
+      .wine-card{padding:14px 4px; font-size:0.96rem;}
+      .results-meta{padding:0 7px;}
+    }
+    [data-theme="dark"] body { color: #f7f4ef; background: var(--bg);}
+    [data-theme="dark"] h1 { color: #e6b198;text-shadow: 0 3px 14px #482619a9;}
+    [data-theme="dark"] .sub { color: #cebdbc;}
+    [data-theme="dark"] .search-form,
+    [data-theme="dark"] .wine-card {background: var(--card);}
+    [data-theme="dark"] label{ color: #e6b198; }
+    [data-theme="dark"] input, [data-theme="dark"] select {background: #232024; color: #e6b198; border-color: #a87362;}
+    [data-theme="dark"] .title{color:#e6b198;}
+    [data-theme="dark"] .desc{color:#ecdccb;}
+    [data-theme="dark"] .meta{color:#cebdbc;}
+    [data-theme="dark"] .tags{color:#e6b198;}
+    [data-theme="dark"] .btn{background:linear-gradient(180deg,#e6b198,#a87362);}
+    [data-theme="dark"] .page-btn{background:#31222a;color:#e6b198;}
+    [data-theme="dark"] .page-btn.active{background:#943232;color:#fff;}
   </style>
-
 </head>
 <body>
-  <header>
-    <div>
-      <h1>Wines of the World</h1>
-      <div class="sub">Search by country, price, grape, sweetness, or style. Dark mode and animations included.</div>
-    </div>
-    <div class="controls">
-      <button class="btn" id="themeToggle">Toggle Dark</button>
-      <form method="POST" style="display:inline;">
-        <input type="hidden" name="clear" value="1">
-        <button class="btn" style="background:#333">Reset</button>
-      </form>
-    </div>
-  </header>
+  <div class="centered">
+    <h1>Wines of the World Explorer</h1>
+    <div class="sub">Discover, filter, and browse world wines by taste, style, country, and price. Try dark mode!</div>
+  </div>
 
-  <form method="POST" class="search-form" id="searchForm" onsubmit="">
+  <form method="POST" class="search-form" id="searchForm">
     <label>Country
       <input type="text" name="country" value="{{ country }}">
     </label>
-
     <label>Variety
       <select name="variety">
         <option value="">Any</option>
@@ -347,11 +422,9 @@ def index():
         {% endfor %}
       </select>
     </label>
-
     <label>Max price ($)
       <input type="number" name="max_price" step="1" value="{{ max_price }}">
     </label>
-
     <label>Sweetness
       <select name="sweetness">
         <option value="">Any</option>
@@ -360,7 +433,6 @@ def index():
         <option value="Sweet" {% if sweetness == "Sweet" %}selected{% endif %}>Sweet</option>
       </select>
     </label>
-
     <label>Style
       <select name="style">
         <option value="">Any</option>
@@ -370,7 +442,6 @@ def index():
         <option value="Earthy" {% if style=="Earthy" %}selected{% endif %}>Earthy</option>
       </select>
     </label>
-
     <label>Sort
       <select name="sort">
         <option value="">Default</option>
@@ -379,82 +450,78 @@ def index():
         <option value="points_desc" {% if sort=="points_desc" %}selected{% endif %}>Top-rated</option>
       </select>
     </label>
-
-    <div style="display:flex;gap:8px;align-items:center">
+    <div class="search-btn-row">
       <button class="btn" type="submit">Search</button>
-      <div style="font-size:0.9rem;color:var(--muted)">Showing <strong>{{ total }}</strong> results</div>
     </div>
   </form>
 
   <div class="results-meta">
-    <div style="color:var(--muted)">{{ WINES_CACHE_rows }} loaded into memory · page {{ page }} / {{ total_pages }}</div>
-    <div style="color:var(--muted)">Tip: try "Riesling" + sweetness=Sweet</div>
+    <span>{{ WINES_CACHE_rows }} loaded · page {{ page }} / {{ total_pages }}</span>
+    <span>Tip: try “Riesling” + sweetness=Sweet or “Pinot Noir” + style=Earthy</span>
   </div>
 
-  <main>
-    <div class="grid">
-      {% if results %}
-        {% for w in results %}
-          <article class="wine-card" role="article" aria-label="{{ w.title }}">
-            <div class="title">{{ w.title }}</div>
-            <div class="meta">{{ w.variety or 'Unknown variety' }} · {{ w.country or 'Unknown country' }} · {{ (w.price or '?')|e }} · {{ (w.points or '') }} pts · Sweetness: {{ w.sweetness_cat }}</div>
-            <div class="tags">Style: {{ w.style_tags or '—' }}</div>
-            <div class="desc">{{ w.description_wrapped|safe }}</div>
-          </article>
-        {% endfor %}
-      {% else %}
-        <div style="padding:30px;background:var(--card);border-radius:12px">No results. Try broadening filters.</div>
-      {% endif %}
-    </div>
-
-    <div class="pagination" role="navigation" aria-label="Pagination">
-      {% if page > 1 %}
-        <a class="page-btn" href="?page={{ page-1 }}" onclick="submitWithPage({{page-1}})">Prev</a>
-      {% endif %}
-      {% for p in range(1, total_pages+1) %}
-        {% if p <= 3 or p > total_pages-3 or (p>=page-2 and p<=page+2) %}
-          <button class="page-btn {% if p==page %}active{% endif %}" onclick="submitWithPage({{p}})">{{ p }}</button>
-        {% elif p==4 and page>6 %}
-          <span style="padding:8px 10px;color:var(--muted)">…</span>
-        {% elif p==total_pages-3 and page<total_pages-5 %}
-          <span style="padding:8px 10px;color:var(--muted)">…</span>
-        {% endif %}
+  <div class="grid">
+    {% if results %}
+      {% for w in results %}
+        <article class="wine-card" aria-label="{{ w.title }}">
+          <div class="title">{{ w.title }}</div>
+          <div class="meta">{{ w.variety or 'Unknown variety' }} · {{ w.country or 'Unknown country' }} · ${{ (w.price or '?')|e }} · {{ (w.points or '') }} pts · Sweetness: {{ w.sweetness_cat }}</div>
+          <div class="tags">Style: {{ w.style_tags or '—' }}</div>
+          <div class="desc">{{ w.description }}</div>
+        </article>
       {% endfor %}
-      {% if page < total_pages %}
-        <a class="page-btn" href="?page={{ page+1 }}" onclick="submitWithPage({{page+1}})">Next</a>
+    {% else %}
+      <div style="padding:30px;background:var(--card);border-radius:14px;text-align:center">No results. Try broadening filters.</div>
+    {% endif %}
+  </div>
+
+  <nav class="pagination" aria-label="Pagination">
+    {% if page > 1 %}
+      <button class="page-btn" type="button" onclick="submitWithPage({{page-1}})">Prev</button>
+    {% endif %}
+    {% for p in range(1, total_pages+1) %}
+      {% if p <= 2 or p > total_pages-2 or (p>=page-2 and p<=page+2) %}
+        <button class="page-btn {% if p==page %}active{% endif %}" type="button" onclick="submitWithPage({{p}})">{{ p }}</button>
+      {% elif p==3 and page>6 %}
+        <span style="padding:7px 10px;color:var(--muted)">…</span>
+      {% elif p==total_pages-2 and page<total_pages-5 %}
+        <span style="padding:7px 10px;color:var(--muted)">…</span>
       {% endif %}
-    </div>
-  </main>
+    {% endfor %}
+    {% if page < total_pages %}
+      <button class="page-btn" type="button" onclick="submitWithPage({{page+1}})">Next</button>
+    {% endif %}
+  </nav>
+  <button class="btn" id="themeToggle" style="position:fixed;bottom:18px;right:18px;z-index:22">Toggle Dark Mode</button>
+  <script>
+    // Theme toggle
+    function setTheme(theme){
+      if(theme==="dark") document.documentElement.setAttribute("data-theme","dark");
+      else document.documentElement.removeAttribute("data-theme");
+      localStorage.setItem("theme", theme);
+    }
+    document.getElementById("themeToggle").onclick = function(){
+      const cur = localStorage.getItem("theme") === "dark" ? "dark" : "light";
+      setTheme(cur === "dark" ? "light" : "dark");
+    };
+    (function(){
+      const saved = localStorage.getItem("theme") || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      setTheme(saved);
+    })();
 
-<script>
-  // theme toggle
-  function setTheme(theme){
-    if(theme==="dark") document.documentElement.setAttribute("data-theme","dark");
-    else document.documentElement.removeAttribute("data-theme");
-    localStorage.setItem("theme", theme);
-  }
-  document.getElementById("themeToggle").addEventListener("click", function(e){
-    const cur = localStorage.getItem("theme") === "dark" ? "dark" : "light";
-    setTheme(cur === "dark" ? "light" : "dark");
-  });
-  (function(){
-    const saved = localStorage.getItem("theme") || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    setTheme(saved);
-  })();
-
-  // helper to submit current filters but change page param
-  function submitWithPage(p){
-    const form = document.getElementById("searchForm");
-    // add or update hidden page input
-    let inp = form.querySelector('input[name="page"]');
-    if(!inp){ inp = document.createElement('input'); inp.type='hidden'; inp.name='page'; form.appendChild(inp); }
-    inp.value = p;
-    form.submit();
-  }
-</script>
-
+    // Helper for pagination
+    function submitWithPage(p){
+      const form = document.getElementById("searchForm");
+      let inp = form.querySelector('input[name="page"]');
+      if(!inp){ inp = document.createElement('input'); inp.type='hidden'; inp.name='page'; form.appendChild(inp);}
+      inp.value = p;
+      form.submit();
+    }
+  </script>
 </body>
 </html>
+
+
     """
 
     # wrap description safely with line-breaks
