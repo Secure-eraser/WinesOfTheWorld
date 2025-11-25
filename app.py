@@ -6,19 +6,14 @@ import os
 import requests
 
 def download_wine_csv():
-    file_id = 'YOUR_GOOGLE_DRIVE_FILE_ID'
     url = f'https://drive.google.com/uc?export=download&id=164v84UzMXctzMiL-KPJQpH6visSWwN8S'
     dest = 'winemag-data-130k-v2.csv'
     # Download only if not present
-    if not os.path.exists(dest):
-        print("Downloading CSV from Google Drive...")
-        resp = requests.get(url)
-        with open(dest, 'wb') as f:
-            f.write(resp.content)
-        print("Download complete.")
-    else:
-        print("Using local CSV file.")
-
+    print("Downloading CSV from Google Drive...")
+    resp = requests.get(url)
+    with open(dest, 'wb') as f:
+        f.write(resp.content)
+    print("Download complete.")
 
 app = Flask(__name__)
 
@@ -356,3 +351,4 @@ def index():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
